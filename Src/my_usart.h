@@ -82,6 +82,9 @@ typedef struct
 	unsigned char rx_data[USART4_RECV_BUFF_SIZE];
 	unsigned char tx_data[USART4_SEND_BUFF_SIZE];
 	
+	unsigned char reslut;
+	unsigned char mask;
+	
 	unsigned char recv_ok;	
 	unsigned short point;
 }S_Usart4_Recv_Data,*P_S_Usart4_Recv_Data;
@@ -111,6 +114,7 @@ void UsartReceive_IDLE(UART_HandleTypeDef *huart)  ;
 void get_tcm300_id(void);
 void pretreatment_uasrt1_data(void);
 void get_hcho_value(void);
+void pretreatment_uasrt4_data(void);
 
 #endif
 

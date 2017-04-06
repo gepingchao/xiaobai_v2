@@ -18,6 +18,8 @@
 #include "my_paper_lib.h"
 #include "my_usart.h"
 #include "remap.h"
+#include "cpu.h"
+#include "iic.h"
 
 #endif
 

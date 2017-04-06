@@ -4,6 +4,19 @@
 #include "gpio.h"
 #include "my_port.h"
 
+typedef struct
+{
+	unsigned int co2;
+	unsigned int tvoc_co2;
+	unsigned int tvoc_voc;
+	unsigned int hcho;
+	unsigned int pm25;
+	unsigned int pm10;
+	unsigned int temp;
+	unsigned int hum;
+}S_Air_Info,*P_S_Air_Info;
+extern S_Air_Info air_info;
+
 #define POWER_ON	HAL_GPIO_WritePin(POWER_GPIO_Port,POWER_Pin,GPIO_PIN_SET)
 #define POWER_OFF	HAL_GPIO_WritePin(POWER_GPIO_Port,POWER_Pin,GPIO_PIN_RESET)
 

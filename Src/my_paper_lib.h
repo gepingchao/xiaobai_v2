@@ -77,8 +77,6 @@ extern const unsigned char gImage_16_15[][30];
 extern const unsigned char gImage_mem[4736];
 extern const unsigned char gImage_graph[4736] ;
 
-extern const unsigned char gImage_QQ_96_96[1152];
-
 float min_in_n_buf(float* buf,unsigned short data_num);
 float max_in_n_buf(float* buf,unsigned short data_num);
 

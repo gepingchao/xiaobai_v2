@@ -70,29 +70,11 @@ void vApplicationIdleHook(void);
 void vApplicationTickHook(void);
 
 /* USER CODE BEGIN 2 */
-void vApplicationIdleHook( void )
-{
-   /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
-   to 1 in FreeRTOSConfig.h. It will be called on each iteration of the idle
-   task. It is essential that code added to this hook function never attempts
-   to block in any way (for example, call xQueueReceive() with a block time
-   specified, or call vTaskDelay()). If the application makes use of the
-   vTaskDelete() API function (as this demo application does) then it is also
-   important that vApplicationIdleHook() is permitted to return to its calling
-   function, because it is the responsibility of the idle task to clean up
-   memory allocated by the kernel to any task that has since been deleted. */
-}
+
 /* USER CODE END 2 */
 
 /* USER CODE BEGIN 3 */
-void vApplicationTickHook( void )
-{
-   /* This function will be called by each tick interrupt if
-   configUSE_TICK_HOOK is set to 1 in FreeRTOSConfig.h. User code can be
-   added here, but the tick hook is called from an interrupt context, so
-   code must not attempt to block, and only the interrupt safe FreeRTOS API
-   functions can be used (those that end in FromISR()). */
-}
+
 /* USER CODE END 3 */
 
 /* Init FreeRTOS */
@@ -154,7 +136,8 @@ void sys_core_function(void const * argument)
 {
 
   /* USER CODE BEGIN sys_core_function */
-  
+  osDelay(30);
+  save_task_info();
   start_recv_data();
   osDelay(3000);
   get_tcm300_id();
@@ -172,6 +155,7 @@ void sys_core_function(void const * argument)
 void gui_function(void const * argument)
 {
   /* USER CODE BEGIN gui_function */
+  save_task_info();
   unsigned short num;
   test_function();
   /* Infinite loop */
@@ -184,7 +168,10 @@ void gui_function(void const * argument)
 	temp_data.point++;
 	temp_data.save_num = (temp_data.save_num > 127)? 127 : temp_data.save_num;
 	temp_data.f_change = common_change_function;
+
+	
 	push_data(&co2_data,(float)(co2_sensor_recv_data.reslut));
+	
 	load_data_to_graph_buf(&co2_data);
 
 	//draw_image(kx++,ky+=2,8,16,(unsigned char*)gImage_8_16[6],kx%2);
@@ -212,6 +199,7 @@ void gui_function(void const * argument)
 void serial_function(void const * argument)
 {
   /* USER CODE BEGIN serial_function */
+  save_task_info();
   /* Infinite loop */
   unsigned char serial_value;
   for(;;)
@@ -227,6 +215,7 @@ void serial_function(void const * argument)
 			case USART3_RECV_DATA:
 				break;
 			case USART4_RECV_DATA:
+				pretreatment_uasrt4_data();
 				break;
 			case USART5_RECV_DATA:
 				break;
@@ -241,11 +230,14 @@ void serial_function(void const * argument)
 void watcher_function(void const * argument)
 {
   /* USER CODE BEGIN watcher_function */
+  save_task_info();
   /* Infinite loop */
   for(;;)
   {
-	osDelay(1000);
+	osDelay(15000);
 	get_hcho_value();
+	air_info.tvoc_voc = get_tvoc_value();
+	
   }
   /* USER CODE END watcher_function */
 }

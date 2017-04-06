@@ -111,4 +111,8 @@ void get_hcho_value(void)
 	cmd[7] = 0X0A;
 	HAL_UART_Transmit(&huart4,cmd,8,800);
 }
+void pretreatment_uasrt4_data(void)
+{
+	hcho_sensor_recv_data.reslut = hcho_sensor_recv_data.rx_data[4];
+}
 
