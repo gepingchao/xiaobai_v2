@@ -4,8 +4,14 @@ unsigned char hum_buf[3];
 unsigned char tvoc_value[9] = {0};
 void delay_5us(void)
 {
-	unsigned char tmp ;
-	for(tmp = 0;tmp<185;tmp++);
+	unsigned short tmp ;
+	for(tmp = 0;tmp<70;tmp++);
+}
+
+void tvoc_delay_pluse(void)
+{
+	unsigned short tmp ;
+	for(tmp = 0;tmp<100;tmp++);
 }
 
 void delay_5ms(void)
@@ -378,11 +384,11 @@ void start_tvoc_iic(void)
 {
 	TVOC_SDA_1;
 	TVOC_SCL_1;
-	delay_5us();
+	tvoc_delay_pluse();
 	TVOC_SDA_0;
-	delay_5us();
+	tvoc_delay_pluse();
 	TVOC_SCL_0;
-	delay_5us();	
+	tvoc_delay_pluse();	
 	//TVOC_SDA_1;
 }
 
@@ -391,11 +397,13 @@ void stop_tvoc_iic(void)
 {
 	TVOC_SDA_0;
 	TVOC_SCL_0;
-	delay_5us();
+	tvoc_delay_pluse();
+	tvoc_delay_pluse();
 	TVOC_SCL_1;
-	delay_5us();
+	tvoc_delay_pluse();
+	tvoc_delay_pluse();
 	TVOC_SDA_0;
-	delay_5us();
+	tvoc_delay_pluse();
 	TVOC_SDA_1;
 }
 
@@ -403,9 +411,10 @@ void iic_tvoc_ack(void)
 {
 	TVOC_SDA_0;
 	TVOC_SCL_0;
-	delay_5us();
+	tvoc_delay_pluse();
 	TVOC_SCL_1;
-	delay_5us();
+	tvoc_delay_pluse();
+	tvoc_delay_pluse();
 	TVOC_SCL_0;
 	
 }
@@ -414,9 +423,10 @@ void iic_tvoc_nack(void)
 {
 	TVOC_SDA_1;
 	TVOC_SCL_0;
-	delay_5us();
+	tvoc_delay_pluse();
 	TVOC_SCL_1;
-	delay_5us();
+	tvoc_delay_pluse();
+	tvoc_delay_pluse();
 	TVOC_SCL_0;
 	
 }
@@ -424,11 +434,12 @@ void iic_tvoc_nack(void)
 unsigned char iic_tvoc_wait_ack(void)
 {
 	TVOC_SCL_0;
-	delay_5us();
+	tvoc_delay_pluse();
 	TVOC_SDA_1;
-	delay_5us();
+	tvoc_delay_pluse();
 	TVOC_SCL_1;
-	delay_5us();
+	tvoc_delay_pluse();
+	tvoc_delay_pluse();
 	while(READ_TVOC_SDA== GPIO_PIN_SET)
 		{
 			TVOC_SCL_0;
@@ -443,18 +454,19 @@ unsigned char iic_tvoc_write_byte(unsigned char data)
 {
 	unsigned char loop8;
 	TVOC_SCL_0;
-	delay_5us();
+	tvoc_delay_pluse();
 	for(loop8 =0;loop8<8;loop8++)
 		{
 			if((data & 0X80) == 0X00)
 				{TVOC_SDA_0;}
 			else
 				{TVOC_SDA_1;}
-			delay_5us();
+			tvoc_delay_pluse();
 			TVOC_SCL_1;
-			delay_5us();
+			tvoc_delay_pluse();
+			tvoc_delay_pluse();
 			TVOC_SCL_0;
-			delay_5us();
+			tvoc_delay_pluse();
 			data = (data<<1);
 		}
 	TVOC_SCL_0;
@@ -471,67 +483,74 @@ unsigned char iic_tvoc_read_byte(unsigned char ack)
 	for(loop8 = 0;loop8<8;loop8++)
 		{
 			TVOC_SCL_0;
-			delay_5us();
+			tvoc_delay_pluse();
 			TVOC_SCL_1;
-			delay_5us();
+			tvoc_delay_pluse();
 			read_data = (read_data<<1);
 			stat = READ_TVOC_SDA;
 			if(stat == GPIO_PIN_SET)
 				{read_data = read_data|0X01;}
 		}
 		TVOC_SCL_0;
-		delay_5us();
+		tvoc_delay_pluse();
 		return read_data;	
 }
 
 unsigned int get_tvoc_value(void)
 {
-	unsigned int tvoc = 0;
+	unsigned int tvoc_co2 = 0;
+	unsigned int tvoc_voc = 0;
 	start_tvoc_iic();
+	tvoc_delay_pluse();
 	iic_tvoc_write_byte(TVOC_ADDR_R);
 	
-	iic_tvoc_wait_ack();
-	//iic_tvoc_ack();
+	if( 0 == iic_tvoc_wait_ack())
+		{
+			return 0;
+		}
+	delay_5ms();
+	
 	tvoc_value[0] = iic_tvoc_read_byte(ACK);
-	
-	//iic_tvoc_wait_ack();
 	iic_tvoc_ack();
+	
 	tvoc_value[1] = iic_tvoc_read_byte(ACK);
-	
-	//iic_tvoc_wait_ack();
 	iic_tvoc_ack();
+	
 	tvoc_value[2] = iic_tvoc_read_byte(ACK);
-
-	//iic_tvoc_wait_ack();
 	iic_tvoc_ack();
-	tvoc_value[3] = iic_tvoc_read_byte(ACK);
-
-	//iic_tvoc_wait_ack();
-	iic_tvoc_ack();
-	tvoc_value[4] = iic_tvoc_read_byte(ACK);
-
-	//iic_tvoc_wait_ack();
-	iic_tvoc_ack();
-	tvoc_value[5] = iic_tvoc_read_byte(ACK);
-
-	//iic_tvoc_wait_ack();
-	iic_tvoc_ack();
-	tvoc_value[6] = iic_tvoc_read_byte(ACK);
-
-	//iic_tvoc_wait_ack();
-	iic_tvoc_ack();
-	tvoc_value[7] = iic_tvoc_read_byte(ACK);
-
-	iic_tvoc_ack();
-	tvoc_value[8] = iic_tvoc_read_byte(ACK);
 	
+	tvoc_value[3] = iic_tvoc_read_byte(ACK);
+	iic_tvoc_ack();
+	
+	tvoc_value[4] = iic_tvoc_read_byte(ACK);
+	iic_tvoc_ack();
+	
+	tvoc_value[5] = iic_tvoc_read_byte(ACK);
+	iic_tvoc_ack();
+	
+	tvoc_value[6] = iic_tvoc_read_byte(ACK);
+	iic_tvoc_ack();
+	
+	tvoc_value[7] = iic_tvoc_read_byte(ACK);
+	iic_tvoc_ack();
+	
+	tvoc_value[8] = iic_tvoc_read_byte(ACK);	
 	iic_tvoc_nack();
 
 	stop_tvoc_iic();
 	
-	tvoc = tvoc_value[0];
-	tvoc <<= 8;
-	tvoc += tvoc_value[1];
-	return tvoc;
+	tvoc_co2 = tvoc_value[0];
+	tvoc_co2 <<= 8;
+	tvoc_co2 += tvoc_value[1];
+	
+	tvoc_voc = tvoc_value[7];
+	tvoc_voc <<= 8;
+	tvoc_voc += tvoc_value[8];
+	if( 0 == tvoc_value[2])
+		{
+			air_info.tvoc_co2 = tvoc_co2;
+			air_info.tvoc_voc = tvoc_voc;
+		}
+	return tvoc_voc;
 }
 

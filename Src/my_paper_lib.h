@@ -91,11 +91,13 @@ void load_image_to_buf(unsigned char * image);
 unsigned char display_num(unsigned char line_x,unsigned short pixel_y,float num,unsigned char font);//返回值为当前占用的屏幕长度font字体: 2 16*10  1:8*6
 void display_temp(unsigned char line_x,unsigned short pixel_y,float temp,unsigned char font);
 void display_humidity(unsigned char line_x,unsigned short pixel_y,float humidity);
-void display_voc(unsigned char line_x,unsigned short pixel_y,unsigned char voc);
+void display_voc(unsigned char line_x,unsigned short pixel_y,unsigned short voc,unsigned char font);
 void display_pm25(unsigned char line_x,unsigned short pixel_y,unsigned short pm25,unsigned char font);
 void display_co2(unsigned char line_x,unsigned short pixel_y,unsigned short co2,unsigned char font);
 
 void display_menu(void);
+void refresh_menu(void);
+
 void draw_graph(void);
 void display_graph(void);
 void clear_all(void);

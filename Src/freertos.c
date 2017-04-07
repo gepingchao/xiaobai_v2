@@ -110,7 +110,7 @@ void MX_FREERTOS_Init(void) {
   serial_taskHandle = osThreadCreate(osThread(serial_task), NULL);
 
   /* definition and creation of watcher_task */
-  osThreadDef(watcher_task, watcher_function, osPriorityNormal, 0, 400);
+  osThreadDef(watcher_task, watcher_function, osPriorityRealtime, 0, 400);
   watcher_taskHandle = osThreadCreate(osThread(watcher_task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -182,7 +182,8 @@ void gui_function(void const * argument)
 	
 	//graph_buf.save_num = (graph_buf.save_num>127)? 127: graph_buf.save_num;
 		
-	display_graph();	
+	//display_graph();	
+	refresh_menu();
 
 	
 	if(num > MAX_SAVE_DATA_NUM)
@@ -234,9 +235,9 @@ void watcher_function(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	osDelay(15000);
+	osDelay(3000);
 	get_hcho_value();
-	air_info.tvoc_voc = get_tvoc_value();
+	get_tvoc_value();
 	
   }
   /* USER CODE END watcher_function */

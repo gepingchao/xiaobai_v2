@@ -1,5 +1,5 @@
 #include "my_paper_lib.h"
-
+#include "include.h"
 
 unsigned char g_image_buf[4736];
 
@@ -239,12 +239,12 @@ void display_humidity(unsigned char line_x,unsigned short pixel_y,float humidity
 	insert_image(line_x,pixel_y+(offset*10),16,10,(unsigned char*)gImage_16_10[12]);	
 }
 
-void display_voc(unsigned char line_x,unsigned short pixel_y,unsigned char voc)
+void display_voc(unsigned char line_x,unsigned short pixel_y,unsigned short voc,unsigned char font)
 {	
 	unsigned char offset;
-	offset = display_num(line_x,pixel_y,voc,2);
+	offset = display_num(line_x,pixel_y,voc,font);
 	offset ++;
-	//insert_image(line_x,pixel_y+(offset*10),16,15,(unsigned char*)gImage_16_15[1]);	
+	insert_image(line_x,pixel_y+(offset*(font*4 + 2)),16,15,(unsigned char*)gImage_16_15[2]);		
 }
 
 void display_pm25(unsigned char line_x,unsigned short pixel_y,unsigned short pm25,unsigned char font)
@@ -259,6 +259,14 @@ void display_co2(unsigned char line_x,unsigned short pixel_y,unsigned short co2,
 {
 	unsigned char offset;
 	offset = display_num(line_x,pixel_y,co2,2);
+	offset ++;
+	insert_image(line_x,pixel_y+(offset*(font*4 + 2)+1),16,15,(unsigned char*)gImage_16_15[0]);	
+}
+
+void display_hcho(unsigned char line_x,unsigned short pixel_y,unsigned short hcho,unsigned char font)
+{
+	unsigned char offset;
+	offset = display_num(line_x,pixel_y,hcho,2);
 	offset ++;
 	insert_image(line_x,pixel_y+(offset*(font*4 + 2)+1),16,15,(unsigned char*)gImage_16_15[0]);	
 }
@@ -279,38 +287,76 @@ void display_menu(void)
 	//insert_image(0,113,8,16,(unsigned char*)gImage_8_16[7]);
 	insert_image(0,202,8,16,(unsigned char*)gImage_8_16[8]);
 	//insert_image(0,147,8,16,(unsigned char*)gImage_8_16[9]);
-
 	insert_image(0,44*6,8,6,(unsigned char*)gImage_8_6[1]);
 	insert_image(0,45*6,8,6,(unsigned char*)gImage_8_6[2]);
 	insert_image(0,46*6,8,6,(unsigned char*)gImage_8_6[13]);
 	insert_image(0,47*6,8,6,(unsigned char*)gImage_8_6[0]);
 	insert_image(0,48*6,8,6,(unsigned char*)gImage_8_6[0]);
-	//insert_image(0,46*6,8,6,(unsigned char*)gImage_8_6[14]);
-	//insert_image(0,47*6,8,6,(unsigned char*)gImage_8_6[0]);
-	//insert_image(0,48*6,8,6,(unsigned char*)gImage_8_6[0]);
-
-
-	for(loopx =0 ;loopx < 15 ; loopx ++)
-		{
-			//insert_image(15,loopx*7,8,6,(unsigned char*)gImage_8_6[loopx]);
-		}
-
-	for(loopx =0 ;loopx < 10 ; loopx ++)
-		{
-			//insert_image(0,loopx*16,8,16,(unsigned char*)gImage_8_16[loopx]);
-		}
-
-
 	
-	display_pm25(3,40,999,1);
+	display_pm25(3,40,999,2);
 	display_pm25(3,125,999,2);
 	
-	display_voc(6,40,1);
+	display_voc(6,40,(unsigned short)(air_info.tvoc_voc),2);
+	display_hcho(6,125,(unsigned short)(hcho_sensor_recv_data.reslut),2);
 	
 	display_humidity(9,40,23);
-	display_co2(9,125,1234,2);
+	display_co2(9,125,(unsigned short)(co2_sensor_recv_data.reslut),2);
 	display_temp(12,40,-27,2);
-	display_temp(12,125,-27,1);
+	display_temp(12,125,-27,2);
+	
+	EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)g_image_buf,1);
+}
+
+void refresh_menu(void)
+{
+	RTC_TimeTypeDef rtc_time;
+	unsigned show_time[4] = {0};
+	unsigned char loopx;
+	load_image_to_buf((unsigned char*) gImage_mem);	
+	insert_image(0,221,8,16,(unsigned char*)gImage_8_16[3]);
+	insert_image(0,183,8,16,(unsigned char*)gImage_8_16[6]);
+	insert_image(0,202,8,16,(unsigned char*)gImage_8_16[8]);
+
+	HAL_RTC_GetTime(&hrtc,&rtc_time,RTC_FORMAT_BIN);
+	if(rtc_time.Hours < 10)
+		{		
+			show_time[1] = rtc_time.Hours % 10;
+			insert_image(0,45*6,8,6,(unsigned char*)gImage_8_6[show_time[1]]);
+		
+		}
+	else
+		{		
+			show_time[0] = rtc_time.Hours / 10;
+			insert_image(0,44*6,8,6,(unsigned char*)gImage_8_6[show_time[0]]);	
+			show_time[1] = rtc_time.Hours % 10;
+			insert_image(0,45*6,8,6,(unsigned char*)gImage_8_6[show_time[1]]);		
+		}
+	
+	insert_image(0,46*6,8,6,(unsigned char*)gImage_8_6[13]);
+
+	if(rtc_time.Minutes < 10)
+		{
+			show_time[3] = rtc_time.Minutes %10;
+			insert_image(0,47*6,8,6,(unsigned char*)gImage_8_6[show_time[3]]);	
+		}
+	else
+		{
+			show_time[2] = rtc_time.Minutes /10;
+			insert_image(0,47*6,8,6,(unsigned char*)gImage_8_6[show_time[2]]);	
+			show_time[3] = rtc_time.Minutes %10;
+			insert_image(0,48*6,8,6,(unsigned char*)gImage_8_6[show_time[3]]);						
+		}
+
+	display_pm25(3,40,999,2);
+	display_pm25(3,125,999,2);
+	
+	display_voc(6,40,(unsigned short)(air_info.tvoc_voc),2);
+	display_hcho(6,125,(unsigned short)(hcho_sensor_recv_data.reslut),2);
+	
+	display_humidity(9,40,23);
+	display_co2(9,125,(unsigned short)(co2_sensor_recv_data.reslut),2);
+	display_temp(12,40,-27,2);
+	display_temp(12,125,-27,2);
 	
 	EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)g_image_buf,1);
 }
@@ -969,7 +1015,11 @@ const unsigned char gImage_16_15[][30] = {
 
 { /* 0X81,0X01,0X0F,0X00,0X10,0X00, 1  ug */
 0XFF,0XFF,0XFF,0XFF,0XC0,0X7F,0XFF,0XBF,0XFF,0XBF,0XFF,0X7F,0XC0,0X1F,0XFF,0XFF,
-0XF0,0X3B,0XEF,0XDD,0XEF,0XDD,0XEF,0XBD,0XF0,0X03,0XFF,0XFF,0XFF,0XFF,}
+0XF0,0X3B,0XEF,0XDD,0XEF,0XDD,0XEF,0XBD,0XF0,0X03,0XFF,0XFF,0XFF,0XFF,},
+
+{ /* 0X81,0X01,0X0F,0X00,0X10,0X00, ppb*/
+0XFF,0XFF,0XE0,0X01,0XEF,0X7F,0XF0,0XFF,0XFF,0XFF,0XFF,0XFF,0XE0,0X01,0XEF,0X7F,
+0XF0,0XFF,0XFF,0XFF,0XFF,0XFF,0XE0,0X01,0XFF,0XBD,0XFF,0XC3,0XFF,0XFF,},
 
 };
 
