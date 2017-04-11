@@ -98,8 +98,11 @@ int main(void)
   MX_TIM2_Init();
 
   /* USER CODE BEGIN 2 */
-  co2_sensor_recv_data.mask = 900;
   POWER_ON;
+  RELEASE_WIFI_RESET;
+  RELEASE_SMART_LINK;
+  //SET_SMART_LINK;
+  co2_sensor_recv_data.mask = 900;
   HAL_Delay(300); 
   HAL_UART_Transmit(&huart1,"K 2",3,800);
   HAL_Delay(300);

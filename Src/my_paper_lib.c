@@ -271,27 +271,50 @@ void display_hcho(unsigned char line_x,unsigned short pixel_y,unsigned short hch
 	insert_image(line_x,pixel_y+(offset*(font*4 + 2)+1),16,15,(unsigned char*)gImage_16_15[0]);	
 }
 
+void display_time(unsigned char line_x,unsigned short pixel_y)
+{
+	RTC_TimeTypeDef rtc_time;
+	unsigned show_time[4] = {0};
+	
+	HAL_RTC_GetTime(&hrtc,&rtc_time,RTC_FORMAT_BIN);
+	if(rtc_time.Hours < 10)
+		{		
+			show_time[1] = rtc_time.Hours % 10;
+			insert_image(line_x,pixel_y,8,6,(unsigned char*)gImage_8_6[show_time[1]]);
+			insert_image(line_x,pixel_y+6,8,6,(unsigned char*)gImage_8_6[13]);//:
+			show_time[2] = rtc_time.Minutes /10;
+			insert_image(line_x,pixel_y+12,8,6,(unsigned char*)gImage_8_6[show_time[2]]);	
+			show_time[3] = rtc_time.Minutes %10;
+			insert_image(line_x,pixel_y+18,8,6,(unsigned char*)gImage_8_6[show_time[3]]);			
+		
+		}
+	else
+		{		
+			show_time[0] = rtc_time.Hours / 10;
+			insert_image(line_x,pixel_y,8,6,(unsigned char*)gImage_8_6[show_time[0]]);	
+			show_time[1] = rtc_time.Hours % 10;
+			insert_image(line_x,pixel_y+6,8,6,(unsigned char*)gImage_8_6[show_time[1]]);		
+			insert_image(line_x,pixel_y+12,8,6,(unsigned char*)gImage_8_6[13]);
+			show_time[2] = rtc_time.Minutes /10;
+			insert_image(line_x,pixel_y+18,8,6,(unsigned char*)gImage_8_6[show_time[2]]);	
+			show_time[3] = rtc_time.Minutes %10;
+			insert_image(line_x,pixel_y+24,8,6,(unsigned char*)gImage_8_6[show_time[3]]);						
+				
+		}
+
+}
+
 void display_menu(void)
 {
 	clear_all();
 	unsigned char loopx;
 	
 	load_image_to_buf((unsigned char*) gImage_mem);	
-	//insert_image(0,0,8,16,(unsigned char*)gImage_8_16[0]);
-	//insert_image(0,17,8,16,(unsigned char*)gImage_8_16[1]);
-	//insert_image(0,33,8,16,(unsigned char*)gImage_8_16[2]);
-	insert_image(0,221,8,16,(unsigned char*)gImage_8_16[3]);
-	//insert_image(0,65,8,16,(unsigned char*)gImage_8_16[4]);
-	//insert_image(0,81,8,16,(unsigned char*)gImage_8_16[5]);
-	insert_image(0,183,8,16,(unsigned char*)gImage_8_16[6]);
-	//insert_image(0,113,8,16,(unsigned char*)gImage_8_16[7]);
-	insert_image(0,202,8,16,(unsigned char*)gImage_8_16[8]);
-	//insert_image(0,147,8,16,(unsigned char*)gImage_8_16[9]);
-	insert_image(0,44*6,8,6,(unsigned char*)gImage_8_6[1]);
-	insert_image(0,45*6,8,6,(unsigned char*)gImage_8_6[2]);
-	insert_image(0,46*6,8,6,(unsigned char*)gImage_8_6[13]);
-	insert_image(0,47*6,8,6,(unsigned char*)gImage_8_6[0]);
-	insert_image(0,48*6,8,6,(unsigned char*)gImage_8_6[0]);
+	insert_image(0,277,8,16,(unsigned char*)gImage_8_16[3]);
+	insert_image(0,238,8,16,(unsigned char*)gImage_8_16[6]);
+	insert_image(0,258,8,16,(unsigned char*)gImage_8_16[8]);
+	
+	display_time(0,186);
 	
 	display_pm25(3,40,999,2);
 	display_pm25(3,125,999,2);
@@ -307,45 +330,15 @@ void display_menu(void)
 	EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)g_image_buf,1);
 }
 
-void refresh_menu(void)
+void refresh_menu(unsigned char mode)//mode 1 part   mode 0 full
 {
-	RTC_TimeTypeDef rtc_time;
-	unsigned show_time[4] = {0};
 	unsigned char loopx;
 	load_image_to_buf((unsigned char*) gImage_mem);	
-	insert_image(0,221,8,16,(unsigned char*)gImage_8_16[3]);
-	insert_image(0,183,8,16,(unsigned char*)gImage_8_16[6]);
-	insert_image(0,202,8,16,(unsigned char*)gImage_8_16[8]);
+	insert_image(0,277,8,16,(unsigned char*)gImage_8_16[3]);
+	insert_image(0,239,8,16,(unsigned char*)gImage_8_16[6]);
+	insert_image(0,258,8,16,(unsigned char*)gImage_8_16[8]);
 
-	HAL_RTC_GetTime(&hrtc,&rtc_time,RTC_FORMAT_BIN);
-	if(rtc_time.Hours < 10)
-		{		
-			show_time[1] = rtc_time.Hours % 10;
-			insert_image(0,45*6,8,6,(unsigned char*)gImage_8_6[show_time[1]]);
-		
-		}
-	else
-		{		
-			show_time[0] = rtc_time.Hours / 10;
-			insert_image(0,44*6,8,6,(unsigned char*)gImage_8_6[show_time[0]]);	
-			show_time[1] = rtc_time.Hours % 10;
-			insert_image(0,45*6,8,6,(unsigned char*)gImage_8_6[show_time[1]]);		
-		}
-	
-	insert_image(0,46*6,8,6,(unsigned char*)gImage_8_6[13]);
-
-	if(rtc_time.Minutes < 10)
-		{
-			show_time[3] = rtc_time.Minutes %10;
-			insert_image(0,47*6,8,6,(unsigned char*)gImage_8_6[show_time[3]]);	
-		}
-	else
-		{
-			show_time[2] = rtc_time.Minutes /10;
-			insert_image(0,47*6,8,6,(unsigned char*)gImage_8_6[show_time[2]]);	
-			show_time[3] = rtc_time.Minutes %10;
-			insert_image(0,48*6,8,6,(unsigned char*)gImage_8_6[show_time[3]]);						
-		}
+	display_time(0,186);
 
 	display_pm25(3,40,999,2);
 	display_pm25(3,125,999,2);
@@ -357,8 +350,15 @@ void refresh_menu(void)
 	display_co2(9,125,(unsigned short)(co2_sensor_recv_data.reslut),2);
 	display_temp(12,40,-27,2);
 	display_temp(12,125,-27,2);
-	
-	EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)g_image_buf,1);
+
+	if(1 == mode)
+		{
+			EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)g_image_buf,1);
+		}
+	if(0 == mode)
+		{
+			EPD_Dis_Full((unsigned char *)g_image_buf,1);
+		}
 }
 
 

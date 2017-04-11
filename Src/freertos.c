@@ -158,12 +158,13 @@ void gui_function(void const * argument)
   save_task_info();
   unsigned short num;
   test_function();
+  //EPD_init_Full();
   /* Infinite loop */
   for(;;)
   {
 
   
-    osDelay(500);
+    osDelay(1000);
 	temp_data.save_num++;
 	temp_data.point++;
 	temp_data.save_num = (temp_data.save_num > 127)? 127 : temp_data.save_num;
@@ -183,7 +184,7 @@ void gui_function(void const * argument)
 	//graph_buf.save_num = (graph_buf.save_num>127)? 127: graph_buf.save_num;
 		
 	//display_graph();	
-	refresh_menu();
+	refresh_menu(1);
 
 	
 	if(num > MAX_SAVE_DATA_NUM)
@@ -232,13 +233,16 @@ void watcher_function(void const * argument)
 {
   /* USER CODE BEGIN watcher_function */
   save_task_info();
+  osDelay(3000);
   /* Infinite loop */
   for(;;)
   {
 	osDelay(3000);
+  	get_stnp_time();
 	get_hcho_value();
 	get_tvoc_value();
-	
+	machine_info.is_wifi_not_linked = (unsigned char) READ_NLINK;
+	machine_info.is_wifi_not_ready = (unsigned char) READ_NREADY;
   }
   /* USER CODE END watcher_function */
 }

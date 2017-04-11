@@ -4,6 +4,7 @@
 #include "gpio.h"
 #include "my_port.h"
 
+
 typedef struct
 {
 	unsigned int co2;
@@ -16,6 +17,15 @@ typedef struct
 	unsigned int hum;
 }S_Air_Info,*P_S_Air_Info;
 extern S_Air_Info air_info;
+
+
+typedef struct
+{
+	unsigned char tcm300id[4];
+	unsigned char is_wifi_not_linked;
+	unsigned char is_wifi_not_ready;
+}S_Machine_Info,*P_S_Machine_Info;
+extern S_Machine_Info machine_info;
 
 #define POWER_ON	HAL_GPIO_WritePin(POWER_GPIO_Port,POWER_Pin,GPIO_PIN_SET)
 #define POWER_OFF	HAL_GPIO_WritePin(POWER_GPIO_Port,POWER_Pin,GPIO_PIN_RESET)

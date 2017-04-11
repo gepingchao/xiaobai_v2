@@ -96,7 +96,7 @@ void display_pm25(unsigned char line_x,unsigned short pixel_y,unsigned short pm2
 void display_co2(unsigned char line_x,unsigned short pixel_y,unsigned short co2,unsigned char font);
 
 void display_menu(void);
-void refresh_menu(void);
+void refresh_menu(unsigned char mode);
 
 void draw_graph(void);
 void display_graph(void);
