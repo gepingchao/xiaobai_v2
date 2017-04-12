@@ -244,7 +244,7 @@ void display_voc(unsigned char line_x,unsigned short pixel_y,unsigned short voc,
 	unsigned char offset;
 	offset = display_num(line_x,pixel_y,voc,font);
 	offset ++;
-	insert_image(line_x,pixel_y+(offset*(font*4 + 2)),16,15,(unsigned char*)gImage_16_15[2]);		
+	insert_image(line_x,pixel_y+(offset*(font*4 + 2)),16,15,(unsigned char*)gImage_16_15[3]);		
 }
 
 void display_pm25(unsigned char line_x,unsigned short pixel_y,unsigned short pm25,unsigned char font)
@@ -268,7 +268,7 @@ void display_hcho(unsigned char line_x,unsigned short pixel_y,unsigned short hch
 	unsigned char offset;
 	offset = display_num(line_x,pixel_y,hcho,2);
 	offset ++;
-	insert_image(line_x,pixel_y+(offset*(font*4 + 2)+1),16,15,(unsigned char*)gImage_16_15[0]);	
+	insert_image(line_x,pixel_y+(offset*(font*4 + 2)+1),16,15,(unsigned char*)gImage_16_15[3]);	
 }
 
 void display_time(unsigned char line_x,unsigned short pixel_y)
@@ -799,10 +799,38 @@ void test_function(void)
 	clear_all();
 	
 	graph_buf.read_focus = 1;
-	graph_buf.start_point = 1;
+	graph_buf.start_point = 0;
 
 }
 
+
+void set_cursor(unsigned char direction)
+{
+	if(1 == direction)//向右移动
+		{
+			if(graph_buf.read_focus > 1)
+				{
+					graph_buf.read_focus --;
+				}
+			if(graph_buf.read_focus < graph_buf.start_point)
+				{
+					graph_buf.start_point = graph_buf.read_focus;
+				}
+		
+		}
+	if(0 == direction)//向左移动
+		{
+			if(graph_buf.read_focus < graph_buf.save_num -1)
+				{
+					graph_buf.read_focus ++;				
+				}
+			if(graph_buf.read_focus >( graph_buf.start_point + MAX_GRAPH_DRAW_NUM))
+				{
+					graph_buf.start_point = graph_buf.read_focus -MAX_GRAPH_DRAW_NUM ;
+				}
+		}
+	display_graph();
+}
 
 
 
@@ -1017,9 +1045,13 @@ const unsigned char gImage_16_15[][30] = {
 0XFF,0XFF,0XFF,0XFF,0XC0,0X7F,0XFF,0XBF,0XFF,0XBF,0XFF,0X7F,0XC0,0X1F,0XFF,0XFF,
 0XF0,0X3B,0XEF,0XDD,0XEF,0XDD,0XEF,0XBD,0XF0,0X03,0XFF,0XFF,0XFF,0XFF,},
 
-{ /* 0X81,0X01,0X0F,0X00,0X10,0X00, ppb*/
+{ /* 0X81,0X01,0X0F,0X00,0X10,0X00, 2 ppb*/
 0XFF,0XFF,0XE0,0X01,0XEF,0X7F,0XF0,0XFF,0XFF,0XFF,0XFF,0XFF,0XE0,0X01,0XEF,0X7F,
 0XF0,0XFF,0XFF,0XFF,0XFF,0XFF,0XE0,0X01,0XFF,0XBD,0XFF,0XC3,0XFF,0XFF,},
+
+{ /* 0X81,0X01,0X0F,0X00,0X10,0X00, 3 mg */
+0XFF,0XFF,0X80,0X1F,0XDF,0XFF,0XDF,0XFF,0XE0,0X1F,0XDF,0XFF,0XDF,0XFF,0XE0,0X1F,
+0XFF,0XFF,0XE0,0X3B,0XDF,0XDD,0XDF,0XDD,0XDF,0XBD,0XE0,0X03,0XFF,0XFF,},
 
 };
 
@@ -1089,12 +1121,12 @@ const unsigned char gImage_16_38[][76] = {
 0XFF,0XFB,0XFF,0XFF,0XFF,0XFF,0XE0,0X07,0XCF,0XF3,0XDF,0XFB,0XCF,0XF3,0XE0,0X07,
 0XFF,0XFF,0XFF,0XFF,0XF9,0XE7,0XF9,0XE7,0XFF,0XFF,0XFF,0XFF,},
 
-{ /* 0X81,0X01,0X26,0X00,0X10,0X00,  9 co2*/
-0XF8,0X1F,0XE0,0X0F,0XC7,0XE3,0X8F,0XF3,0X9F,0XF9,0X3F,0XF9,0X3F,0XF9,0X3F,0XF9,
-0X9F,0XF3,0X9F,0XF3,0XFF,0XFF,0XF0,0X3F,0XE0,0X0F,0XC7,0XE7,0X9F,0XF3,0X9F,0XF9,
-0X3F,0XF9,0X3F,0XF9,0X3F,0XF9,0X9F,0XF3,0XCF,0XE3,0XE0,0X07,0XF0,0X3F,0XFF,0XFF,
-0XFF,0XFF,0XCF,0XF1,0X8F,0XE1,0X3F,0XC9,0X3F,0X99,0X3F,0X39,0X9E,0X79,0XC0,0XF9,
-0XF3,0XF9,0XFF,0XFF,0XFF,0XFF,0XF9,0XF9,0XF9,0XF9,0XFF,0XFF,},
+{ /* 0X81,0X01,0X26,0X00,0X10,0X00, 9 co2 */
+0XFF,0XFF,0XFC,0X1F,0XF0,0X0F,0XE3,0XC7,0XE7,0XF3,0XCF,0XF3,0XCF,0XF3,0XCF,0XF3,
+0XCF,0XF3,0XCF,0XF3,0XC7,0XE3,0XE7,0XE7,0XFF,0XFF,0XFC,0X3F,0XF0,0X0F,0XE3,0XC7,
+0XE7,0XE7,0XCF,0XF3,0XCF,0XF3,0XCF,0XF3,0XCF,0XF3,0XCF,0XF3,0XE7,0XE7,0XE3,0XC7,
+0XF0,0X1F,0XFC,0X3F,0XFF,0XFF,0XFF,0X7B,0XFE,0X73,0XFE,0XEB,0XFE,0XDB,0XFF,0X3B,
+0XFF,0XFF,0XFF,0XFF,0XF9,0XE7,0XF9,0XE7,0XFF,0XFF,0XFF,0XFF,},
 
 };
 

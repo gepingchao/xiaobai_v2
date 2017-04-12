@@ -89,7 +89,7 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
   MX_USART1_UART_Init();
-  MX_USART2_UART_Init(); 
+  MX_USART2_UART_Init();
   MX_USART3_UART_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
@@ -143,10 +143,10 @@ void SystemClock_Config(void)
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
@@ -167,7 +167,7 @@ void SystemClock_Config(void)
   }
 
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -213,6 +213,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			co2_sensor_recv_data.data_len = USART1_RECV_BUFF_SIZE-co2_sensor_recv_data.dma_cndtr;
 			HAL_UART_Receive_DMA(&huart1, co2_sensor_recv_data.rx_data, USART1_RECV_BUFF_SIZE);  
 			uasrt_msg = USART1_RECV_DATA;
+			co2_sensor_recv_data.recv_ok = 1;
 			xQueueSendFromISR(serial_queueHandle,&uasrt_msg,&xHigherPriorityTaskWoken);
 		}else{
 			HAL_TIM_Base_Start_IT(&htim2);
@@ -228,6 +229,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			tcm300_recv_data.data_len = USART2_RECV_BUFF_SIZE-tcm300_recv_data.dma_cndtr;
 			HAL_UART_Receive_DMA(&huart2, tcm300_recv_data.rx_data, USART2_RECV_BUFF_SIZE);  
 			uasrt_msg = USART2_RECV_DATA;
+			tcm300_recv_data.recv_ok = 1;
 			xQueueSendFromISR(serial_queueHandle,&uasrt_msg,&xHigherPriorityTaskWoken);
 		}else{
 			HAL_TIM_Base_Start_IT(&htim3);
@@ -243,6 +245,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			wifi_recv_data.data_len = USART3_RECV_BUFF_SIZE-wifi_recv_data.dma_cndtr;
 			HAL_UART_Receive_DMA(&huart3, wifi_recv_data.rx_data, USART3_RECV_BUFF_SIZE);  
 			uasrt_msg = USART3_RECV_DATA;
+			wifi_recv_data.recv_ok = 1;
 			xQueueSendFromISR(serial_queueHandle,&uasrt_msg,&xHigherPriorityTaskWoken);
 		}else{
 			HAL_TIM_Base_Start_IT(&htim4);
@@ -258,6 +261,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			hcho_sensor_recv_data.data_len = USART4_RECV_BUFF_SIZE-hcho_sensor_recv_data.dma_cndtr;
 			HAL_UART_Receive_DMA(&huart4, hcho_sensor_recv_data.rx_data, USART4_RECV_BUFF_SIZE);  
 			uasrt_msg = USART4_RECV_DATA;
+			hcho_sensor_recv_data.recv_ok = 1;
 			xQueueSendFromISR(serial_queueHandle,&uasrt_msg,&xHigherPriorityTaskWoken);
 		}else{
 			HAL_TIM_Base_Start_IT(&htim5);

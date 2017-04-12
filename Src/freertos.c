@@ -110,7 +110,7 @@ void MX_FREERTOS_Init(void) {
   serial_taskHandle = osThreadCreate(osThread(serial_task), NULL);
 
   /* definition and creation of watcher_task */
-  osThreadDef(watcher_task, watcher_function, osPriorityRealtime, 0, 400);
+  osThreadDef(watcher_task, watcher_function, osPriorityNormal, 0, 400);
   watcher_taskHandle = osThreadCreate(osThread(watcher_task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -162,9 +162,6 @@ void gui_function(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-
-  
-    osDelay(1000);
 	temp_data.save_num++;
 	temp_data.point++;
 	temp_data.save_num = (temp_data.save_num > 127)? 127 : temp_data.save_num;
@@ -183,14 +180,15 @@ void gui_function(void const * argument)
 	
 	//graph_buf.save_num = (graph_buf.save_num>127)? 127: graph_buf.save_num;
 		
-	//display_graph();	
-	refresh_menu(1);
+	display_graph();	
+	//refresh_menu(1);
 
 	
 	if(num > MAX_SAVE_DATA_NUM)
 		{
 			num = 0;
 		}
+    	osDelay(5000);
 
 
   }
@@ -213,6 +211,7 @@ void serial_function(void const * argument)
 				pretreatment_uasrt1_data();
 				break;
 			case USART2_RECV_DATA:
+				task_deal_tcm300();
 				break;
 			case USART3_RECV_DATA:
 				break;
@@ -234,6 +233,7 @@ void watcher_function(void const * argument)
   /* USER CODE BEGIN watcher_function */
   save_task_info();
   osDelay(3000);
+  read_tcm300_id();
   /* Infinite loop */
   for(;;)
   {

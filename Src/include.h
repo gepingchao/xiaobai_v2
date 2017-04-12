@@ -24,6 +24,8 @@
 #include "wifi.h"
 #include "my_crc.h"
 #include "rtc_time.h"
+#include "protocol.h"
+#include "tcm300.h"
 
 #endif
 

@@ -100,6 +100,8 @@ void refresh_menu(unsigned char mode);
 
 void draw_graph(void);
 void display_graph(void);
+void set_cursor(unsigned char direction);//ÒÆ¶¯¹â±ê
+
 void clear_all(void);
 void set_focus(unsigned char point);
 void load_data_to_graph_buf(P_S_Save_Data data);

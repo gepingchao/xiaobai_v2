@@ -127,13 +127,13 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = TVOC_SCLK_Pin|PAPER_MOSI_Pin|PAPER_CLK_Pin|PAPER_CS_Pin 
                           |PAPER_DC_Pin|PAPER_RST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PtPin */
   GPIO_InitStruct.Pin = TVOC_SDA_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(TVOC_SDA_GPIO_Port, &GPIO_InitStruct);
 
 }

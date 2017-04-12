@@ -2,6 +2,8 @@
 #define __TCM300_H__
 #include "include.h"
 
+#define TCM300_COM	huart2
+
 #define cOperateCode_A   0X50
 #define cOperateCode_C   0X70
 
@@ -21,11 +23,5 @@ void set_send_gateway_end_code(unsigned char data_len);
 void save_gateway_ID(unsigned char * pgateway_ID);
 
 void Deal_RPS_RadioSub(void);
-void Deal_4BS_RadioSub(void);
-
-unsigned char find_tcm_ID(P_S_Save_Learned_Device_Data P_DATA );
-
-unsigned char find_wifi_send_tcm_ID(P_S_Save_Learned_Device_Data P_DATA );
-
 #endif
 
