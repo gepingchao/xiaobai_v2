@@ -304,6 +304,71 @@ void display_time(unsigned char line_x,unsigned short pixel_y)
 
 }
 
+void display_target_time(unsigned char line_x,unsigned short pixel_y,unsigned int time_offset,unsigned char flag)
+{
+	unsigned int time_seconds = 0;
+	RTC_TimeTypeDef rtc_time;
+	unsigned show_time[6] = {0};	
+	HAL_RTC_GetTime(&hrtc,&rtc_time,RTC_FORMAT_BIN);
+
+	time_seconds += rtc_time.Hours * 60 *60;
+	time_seconds += rtc_time.Minutes *60;
+	time_seconds += rtc_time.Seconds;
+	
+	
+	if(0 == flag)
+		{
+			time_seconds = time_seconds - time_offset;
+		}
+	if(1 == flag)
+		{
+			time_seconds = time_seconds + time_offset;
+		}
+
+	rtc_time.Hours = time_seconds / (3600);
+	rtc_time.Minutes = (time_seconds%3600) /60;
+	rtc_time.Seconds = time_seconds%60;
+	
+	if(rtc_time.Hours < 10)
+		{		
+			show_time[1] = rtc_time.Hours % 10;
+			insert_image(line_x,pixel_y,8,6,(unsigned char*)gImage_8_6[show_time[1]]);
+			
+			insert_image(line_x,pixel_y+6,8,6,(unsigned char*)gImage_8_6[13]);//:
+			show_time[2] = rtc_time.Minutes /10;
+			insert_image(line_x,pixel_y+12,8,6,(unsigned char*)gImage_8_6[show_time[2]]);	
+			show_time[3] = rtc_time.Minutes %10;
+			insert_image(line_x,pixel_y+18,8,6,(unsigned char*)gImage_8_6[show_time[3]]);		
+			
+			insert_image(line_x,pixel_y+24,8,6,(unsigned char*)gImage_8_6[13]);//:
+			show_time[4] = rtc_time.Seconds/10;
+			insert_image(line_x,pixel_y+30,8,6,(unsigned char*)gImage_8_6[show_time[4]]);	
+			show_time[5] = rtc_time.Seconds%10;
+			insert_image(line_x,pixel_y+36,8,6,(unsigned char*)gImage_8_6[show_time[5]]);
+		
+		}
+	else
+		{		
+			show_time[0] = rtc_time.Hours / 10;
+			insert_image(line_x,pixel_y,8,6,(unsigned char*)gImage_8_6[show_time[0]]);	
+			show_time[1] = rtc_time.Hours % 10;
+			insert_image(line_x,pixel_y+6,8,6,(unsigned char*)gImage_8_6[show_time[1]]);		
+			insert_image(line_x,pixel_y+12,8,6,(unsigned char*)gImage_8_6[13]);
+			show_time[2] = rtc_time.Minutes /10;
+			insert_image(line_x,pixel_y+18,8,6,(unsigned char*)gImage_8_6[show_time[2]]);	
+			show_time[3] = rtc_time.Minutes %10;
+			insert_image(line_x,pixel_y+24,8,6,(unsigned char*)gImage_8_6[show_time[3]]);	
+			
+			insert_image(line_x,pixel_y+30,8,6,(unsigned char*)gImage_8_6[13]);//:
+			show_time[4] = rtc_time.Seconds/10;
+			insert_image(line_x,pixel_y+36,8,6,(unsigned char*)gImage_8_6[show_time[4]]);	
+			show_time[5] = rtc_time.Seconds%10;
+			insert_image(line_x,pixel_y+42,8,6,(unsigned char*)gImage_8_6[show_time[5]]);
+				
+		}
+
+}
+
 void display_menu(void)
 {
 	clear_all();
@@ -726,6 +791,9 @@ void display_graph(void)
 	insert_image(10,180,16,38,(unsigned char*)gImage_16_38[6]);
 	//display_temp(9,180+38,graph_buf.data_buf[(graph_buf.start_point + graph_buf.focus)],1);//显示光标的值
 	display_co2(10,180+38,graph_buf.data_buf[(graph_buf.start_point + graph_buf.focus)],2);
+
+	insert_image(13,180,16,38,(unsigned char*)gImage_16_38[6]);
+	display_target_time(14,180+38,(graph_buf.start_point + graph_buf.focus)*5,0);
 	
 	//insert_image(14,1,16,10,(unsigned char*)gImage_16_10[16]);
 	//insert_image(14,20,8,6,(unsigned char*)gImage_8_6[16]);
