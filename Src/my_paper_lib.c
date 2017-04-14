@@ -309,8 +309,11 @@ void display_target_time(unsigned char line_x,unsigned short pixel_y,unsigned in
 	unsigned int time_seconds = 0;
 	RTC_TimeTypeDef rtc_time;
 	unsigned show_time[6] = {0};	
-	HAL_RTC_GetTime(&hrtc,&rtc_time,RTC_FORMAT_BIN);
 
+	rtc_time.Hours = graph_buf.save_time.Hours;
+	rtc_time.Minutes= graph_buf.save_time.Minutes;
+	rtc_time.Seconds = graph_buf.save_time.Seconds;
+	
 	time_seconds += rtc_time.Hours * 60 *60;
 	time_seconds += rtc_time.Minutes *60;
 	time_seconds += rtc_time.Seconds;
@@ -393,6 +396,7 @@ void display_menu(void)
 	display_temp(12,125,-27,2);
 	
 	EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)g_image_buf,1);
+	osDelay(200);
 }
 
 void refresh_menu(unsigned char mode)//mode 1 part   mode 0 full
@@ -424,6 +428,7 @@ void refresh_menu(unsigned char mode)//mode 1 part   mode 0 full
 		{
 			EPD_Dis_Full((unsigned char *)g_image_buf,1);
 		}
+	osDelay(200);
 }
 
 
@@ -793,7 +798,7 @@ void display_graph(void)
 	display_co2(10,180+38,graph_buf.data_buf[(graph_buf.start_point + graph_buf.focus)],2);
 
 	insert_image(13,180,16,38,(unsigned char*)gImage_16_38[6]);
-	display_target_time(14,180+38,(graph_buf.start_point + graph_buf.focus)*5,0);
+	display_target_time(14,180+38,(graph_buf.start_point + graph_buf.focus)*(graph_buf.time_step),0);
 	
 	//insert_image(14,1,16,10,(unsigned char*)gImage_16_10[16]);
 	//insert_image(14,20,8,6,(unsigned char*)gImage_8_6[16]);
@@ -801,6 +806,7 @@ void display_graph(void)
 	//display_num(14,6,30,1);
 
 	EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)g_image_buf,1);
+	osDelay(200);
 }
 
 void set_focus(unsigned char point)
@@ -828,7 +834,8 @@ void load_data_to_graph_buf(P_S_Save_Data data)
 			graph_buf.data_buf[loopx] = data->buf[data->operat_point];
 			data->operat_point -- ;
 		}
-	
+	HAL_RTC_GetTime(&hrtc,&(graph_buf.save_time),RTC_FORMAT_BIN);
+
 }
 
 
@@ -864,7 +871,7 @@ void test_function(void)
 	display_menu();
 	HAL_Delay(3000);
 	
-	clear_all();
+	//clear_all();
 	
 	graph_buf.read_focus = 1;
 	graph_buf.start_point = 0;

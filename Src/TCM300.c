@@ -21,7 +21,7 @@ void read_tcm300_id(void)
 	send_data_to_tcm300(8);	
 	HAL_Delay(100);
 		{
-			if(tcm300_recv_data.recv_ok == 1)
+			if(1)//tcm300_recv_data.recv_ok == 1)
 				{
 					tcm300_recv_data.recv_ok = 0;
 					if(VerifyCRC8Sub(&tcm300_recv_data.rx_data[6],(tcm300_recv_data.rx_data[2]+tcm300_recv_data.rx_data[3])) == 0XFF)
@@ -210,14 +210,32 @@ void Deal_RPS_RadioSub(void)
 			switch(command)
 				{
 					case cOperateCode_A:
-						set_cursor(1);
+						if(graph_buf.menu_choose)
+							{
+								set_cursor(1);
+							}
 						break;
 						
 					case cOperateCode_B:								
-						set_cursor(0);
+						if(graph_buf.menu_choose)
+							{
+								set_cursor(0);
+							}
 						break;
 						
-					case cOperateCode_C:								
+					case cOperateCode_C:	
+						graph_buf.menu_choose = !graph_buf.menu_choose;
+						graph_buf.nop_refresh = 1;
+						if(graph_buf.menu_choose)
+							{
+								clear_all();
+								display_graph();	
+							}
+						else
+							{
+								clear_all();
+								refresh_menu(1);
+							}
 
 						break;
 						

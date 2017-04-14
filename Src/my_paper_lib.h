@@ -19,7 +19,8 @@ extern unsigned char g_re_data2[10];
 
 typedef struct
 {
-	
+	unsigned char menu_choose;
+	unsigned char nop_refresh;//跳过刷新
 	unsigned char draw_point;
 	unsigned char write_point:7;
 	
@@ -32,9 +33,11 @@ typedef struct
 	unsigned char start_point;
 	unsigned char end_point;
 	unsigned char owner;
+	unsigned short time_step;//记录数据的时间间隔
 	unsigned short save_num;	
 	float max_data;
 	float min_data;
+	RTC_TimeTypeDef save_time;
 	unsigned char buf[MAX_SAVE_DATA_NUM]; //(7  -> 10  -> 13 -> ......->286 -> 289  )装载数据完成后就是按照时间先后顺序记录的数据
 	float data_buf[MAX_SAVE_DATA_NUM];	
 }S_Graph_Buf,*P_S_Graph_Buf;

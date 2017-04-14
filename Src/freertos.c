@@ -179,16 +179,37 @@ void gui_function(void const * argument)
 	//EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)g_image_buf,1);
 	
 	//graph_buf.save_num = (graph_buf.save_num>127)? 127: graph_buf.save_num;
-		
-	display_graph();	
-	//refresh_menu(1);
+
+	if(graph_buf.menu_choose)
+		{
+				if(1 == graph_buf.nop_refresh)
+					{
+						graph_buf.nop_refresh = 0;
+					}
+				else
+					{
+						display_graph();
+					}	
+		}
+	else
+		{
+				if(1 == graph_buf.nop_refresh)
+					{
+						graph_buf.nop_refresh = 0;
+					}
+				else
+					{
+						refresh_menu(1);
+					}
+		}
 
 	
 	if(num > MAX_SAVE_DATA_NUM)
 		{
 			num = 0;
 		}
-    	osDelay(5000);
+	graph_buf.time_step = 10;
+    	osDelay(10000);
 
 
   }
