@@ -9,7 +9,7 @@ static void pm25_delay_us(void)
 	for(tmp = 0;tmp<200;tmp++); 
 }
 
-static void pm25_delay_ms(void)
+void pm25_delay_ms(void)
 {
 	unsigned int tmp;
 	for(tmp = 0;tmp<5000;tmp++);
@@ -153,6 +153,7 @@ void get_pm_25_1(void)
 void get_pm_25_data8_1(void)
 {	
 	unsigned int tmp_data_8;
+	unsigned char loop4;
 	start_iic_1();
 	iic_1_write_byte(PM_25_ADDR_W);
 	iic_wait_ack_1();
@@ -170,6 +171,14 @@ void get_pm_25_data8_1(void)
 	stop_iic_1();
 	tmp_data_8 =(int)((int)pm_25_data_1.data8[0] |((int)pm_25_data_1.data8[1] <<8));
 	pm_25_data_1.i_data8= tmp_data_8;
+	
+	res_pm2_5.buf2[res_pm2_5.point2++] = tmp_data_8;
+	res_pm2_5.res_data2_tmp = 0;
+	for(loop4 = 0 ; loop4 < 4 ; loop4++)
+		{
+			res_pm2_5.res_data2_tmp += res_pm2_5.buf2[loop4];
+		}
+	res_pm2_5.pm10 = res_pm2_5.res_data2_tmp/4;
 }
 void get_pm_25_data20_1(void)
 {
@@ -203,7 +212,13 @@ void get_pm_25_data20_1(void)
 		{
 			res_pm2_5.res_data1_tmp += res_pm2_5.buf1[loopx];
 		}
-	res_pm2_5.avg_data1 = res_pm2_5.res_data1_tmp/4;
+	res_pm2_5.pm2_5 = res_pm2_5.res_data1_tmp/4;
 	
 }
 
+void get_pm25_data(void)
+{
+	//get_pm_25_1();
+	get_pm_25_data8_1();
+	get_pm_25_data20_1();
+}

@@ -224,12 +224,18 @@ void Deal_RPS_RadioSub(void)
 						break;
 						
 					case cOperateCode_C:	
-						graph_buf.menu_choose = !graph_buf.menu_choose;
+						machine_info.cur_display_data++;
+						graph_buf.menu_choose  =1;
+						if(machine_info.cur_display_data == 8)
+							{
+								machine_info.cur_display_data = 0;
+								graph_buf.menu_choose = 0;
+							}
 						graph_buf.nop_refresh = 1;
 						if(graph_buf.menu_choose)
 							{
 								clear_all();
-								display_graph();	
+								display_graph();
 							}
 						else
 							{

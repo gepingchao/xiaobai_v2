@@ -114,5 +114,6 @@ void get_hcho_value(void)
 void pretreatment_uasrt4_data(void)
 {
 	hcho_sensor_recv_data.reslut = hcho_sensor_recv_data.rx_data[4];
+	air_info.hcho = hcho_sensor_recv_data.rx_data[4];
 }
 

@@ -26,6 +26,7 @@
 #include "rtc_time.h"
 #include "protocol.h"
 #include "tcm300.h"
+#include "pm25.h"
 
 #endif
 

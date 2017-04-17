@@ -16,9 +16,22 @@ extern unsigned char g_image_buf[4736];
 extern unsigned char g_re_data[10];
 extern unsigned char g_re_data2[10];
 
+typedef enum
+{
+	data_of_pm25,
+	data_of_pm10,
+	data_of_tvoc,
+	data_of_co2,
+	data_of_temp,
+	data_of_hum,
+	data_of_hcho,
+}E_Data_Owner;
+
+
 
 typedef struct
 {
+	E_Data_Owner owner;
 	unsigned char menu_choose;
 	unsigned char nop_refresh;//跳过刷新
 	unsigned char draw_point;
@@ -32,7 +45,7 @@ typedef struct
 	unsigned char mark_flag;
 	unsigned char start_point;
 	unsigned char end_point;
-	unsigned char owner;
+	//unsigned char owner;
 	unsigned short time_step;//记录数据的时间间隔
 	unsigned short save_num;	
 	float max_data;
@@ -48,7 +61,7 @@ typedef struct
 {
 	unsigned char point:7;
 	unsigned char operat_point:7;
-	unsigned char type;
+	E_Data_Owner type;
 	unsigned char save_num;
 	float max_data;
 	float min_data;
@@ -62,7 +75,7 @@ extern S_Save_Data pm25_data;
 extern S_Save_Data hum_data;
 extern S_Save_Data co2_data;
 extern S_Save_Data pm10_data;
-
+extern S_Save_Data hcho;
 
 
 

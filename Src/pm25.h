@@ -30,8 +30,8 @@ typedef struct
 	float res_data1_tmp;
 	float res_data2_tmp;
 	float res_data3_tmp;
-	float avg_data1;
-	float avg_data2;
+	float pm2_5;
+	float pm10;
 	float avg_data3;
 	
 }S_Res_Pm25,*P_S_Res_Pm25;
@@ -46,6 +46,7 @@ extern S_Res_Pm25 res_pm2_5;
 
 #define READ_SDA_1 HAL_GPIO_ReadPin(PM_25_SDA_GPIO_Port,PM_25_SDA_Pin)
 #define READ_SCL_1 HAL_GPIO_ReadPin(PM_25_SCLK_GPIO_Port,PM_25_SCLK_Pin)
+void get_pm25_data(void);
 
 
 #endif

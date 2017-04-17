@@ -24,6 +24,7 @@ typedef struct
 	unsigned char tcm300id[4];
 	unsigned char is_wifi_not_linked;
 	unsigned char is_wifi_not_ready;
+	unsigned char cur_display_data;
 }S_Machine_Info,*P_S_Machine_Info;
 extern S_Machine_Info machine_info;
 
