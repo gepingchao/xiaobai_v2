@@ -72,6 +72,14 @@ typedef enum{
 extern unsigned char tem_buf[3];
 extern unsigned char hum_buf[3];
 
+typedef struct
+{
+	unsigned char point;
+	unsigned tem_buf[10];
+	unsigned hum_buf[10];
+}tem_hum_buf_def;
+extern tem_hum_buf_def tem_hum_buf1;
+
 void delay_5us(void);
 void delay_5ms(void);
 void start_iic(void);
@@ -85,9 +93,9 @@ unsigned char start_measure(void);
 unsigned int measure_tmp(void);
 unsigned int get_tem(void);
 unsigned int get_hum(void);
+void init_sht20(void);
 
-
-
+void save_tem_hum_buf(unsigned int tem,unsigned int hum);
 
 //////////////////////////////////////////tvocsensor
 

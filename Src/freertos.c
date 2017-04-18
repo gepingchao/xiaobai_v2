@@ -139,6 +139,7 @@ void sys_core_function(void const * argument)
   osDelay(30);
   save_task_info();
   start_recv_data();
+  init_sht20();
   osDelay(3000);
   get_tcm300_id();
 
@@ -162,19 +163,13 @@ void gui_function(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	temp_data.save_num++;
-	temp_data.point++;
-	temp_data.save_num = (temp_data.save_num > 127)? 127 : temp_data.save_num;
-	temp_data.f_change = common_change_function;
-	
-	
 	push_data(&co2_data,(float)(co2_sensor_recv_data.reslut));
 	push_data(&pm25_data,res_pm2_5.pm2_5);
 	push_data(&pm10_data,res_pm2_5.pm10);
 	push_data(&voc_data,(float)(air_info.tvoc_voc));
 	push_data(&hcho,(float)(air_info.hcho));
-	//push_data(&temp_data,)
-	//push_data(&hum_data)
+	push_data(&temp_data,air_info.cur_temp);
+	push_data(&hum_data,air_info.cur_hum);
 	
 	//load_data_to_graph_buf(&co2_data);
 
@@ -269,6 +264,7 @@ void watcher_function(void const * argument)
 	get_hcho_value();
 	get_tvoc_value();
 	get_pm25_data();
+	save_tem_hum_buf(get_tem(),get_hum());
 	machine_info.is_wifi_not_linked = (unsigned char) READ_NLINK;
 	machine_info.is_wifi_not_ready = (unsigned char) READ_NREADY;
   }

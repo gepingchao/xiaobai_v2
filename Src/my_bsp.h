@@ -15,6 +15,8 @@ typedef struct
 	unsigned int pm10;
 	unsigned int temp;
 	unsigned int hum;
+	float cur_temp;
+	float cur_hum;
 }S_Air_Info,*P_S_Air_Info;
 extern S_Air_Info air_info;
 

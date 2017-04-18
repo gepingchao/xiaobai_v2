@@ -1,4 +1,5 @@
 #include"iic.h"
+tem_hum_buf_def tem_hum_buf1;
 unsigned char tem_buf[3];
 unsigned char hum_buf[3];
 unsigned char tvoc_value[9] = {0};
@@ -239,6 +240,11 @@ unsigned char set_SHT_mode(void)
 	
 	return res;		
 }
+void init_sht20(void)
+{
+	SHT_soft_reset();
+	set_SHT_mode();
+}
 
 unsigned int get_tem(void)
 {
@@ -376,6 +382,74 @@ unsigned int measure_tmp(void)
 			return temperature;
 		}
 	return 0;
+}
+
+
+
+void change_tem(void)
+{
+	float tmp = 0.0;
+	//unsigned int tmp2 = 0;
+	
+	//tmp = (float)air.average_tem;
+	
+	tmp = (float)air_info.temp;
+	tmp = ((tmp/65536)*175.72-46.85);
+	if(tmp < 0.000001)
+		{
+			//air.tem_flag = 0;
+			//air_fliter.current_air_stat.tem[0] = 0;
+			tmp = -tmp;
+		}
+	else
+		{
+			//air.tem_flag = 0XFF;
+			//air_fliter.current_air_stat.tem[0] = 0XFF;
+		}
+	air_info.cur_temp = tmp;
+	tmp *=10;
+	//tmp2 = (unsigned short)tmp;
+	
+	//air_fliter.current_air_stat.tem[1] = (tmp2 >>8);	
+	//air_fliter.current_air_stat.tem[2] = (unsigned char)(tmp2 & 0XFF);
+	
+}
+
+void change_hum(void)
+{
+	float tmp = 0.0;
+	//tmp = (float)air.average_hum;
+	tmp =(float)(air_info.hum);
+	tmp = (tmp*0.001907) -6.0;
+	//air.tx_hum = (unsigned char) tmp;
+	air_info.cur_hum = tmp;
+	//air_fliter.current_air_stat.hum = (unsigned char) tmp;
+}
+
+
+void average_tem_hum(void)
+{
+	unsigned int tem_sum = 0;
+	unsigned int hum_sum = 0;
+	unsigned char loop10;
+	for(loop10 = 0;loop10<10; loop10++)
+		{
+			tem_sum +=tem_hum_buf1.tem_buf[loop10];
+			hum_sum +=tem_hum_buf1.hum_buf[loop10];
+		}
+	
+	air_info.temp = tem_sum /10;
+	air_info.hum=hum_sum /10;
+	change_tem();
+	change_hum();
+}
+
+void save_tem_hum_buf(unsigned int tem,unsigned int hum)
+{
+	tem_hum_buf1.tem_buf[tem_hum_buf1.point] =tem;
+	tem_hum_buf1.hum_buf[tem_hum_buf1.point++] =hum;
+	tem_hum_buf1.point = (tem_hum_buf1.point >9)? 0:tem_hum_buf1.point;	
+	average_tem_hum();
 }
 
 ///////////////////////////////////////////////////////////////////TVOCSENSOR

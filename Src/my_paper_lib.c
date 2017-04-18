@@ -395,10 +395,10 @@ void display_menu(void)
 	display_voc(6,40,(unsigned short)(air_info.tvoc_voc),2);
 	display_hcho(6,125,(unsigned short)(hcho_sensor_recv_data.reslut),2);
 	
-	display_humidity(9,40,23);
+	display_humidity(9,40,(unsigned short)(air_info.cur_hum));
 	display_co2(9,125,(unsigned short)(co2_sensor_recv_data.reslut),2);
-	display_temp(12,40,-27,2);
-	display_temp(12,125,-27,2);
+	display_temp(12,40,(unsigned short)(air_info.cur_temp),2);
+	display_num(12,125,666,2);
 	
 	EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)g_image_buf,1);
 	osDelay(200);
@@ -420,10 +420,10 @@ void refresh_menu(unsigned char mode)//mode 1 part   mode 0 full
 	display_voc(6,40,(unsigned short)(air_info.tvoc_voc),2);
 	display_hcho(6,125,(unsigned short)(hcho_sensor_recv_data.reslut),2);
 	
-	display_humidity(9,40,23);
+	display_humidity(9,40,(unsigned short)(air_info.cur_hum));
 	display_co2(9,125,(unsigned short)(co2_sensor_recv_data.reslut),2);
-	display_temp(12,40,-27,2);
-	display_temp(12,125,-27,2);
+	display_temp(12,40,(unsigned short)(air_info.cur_temp),2);
+	display_num(12,125,666,2);
 
 	if(1 == mode)
 		{
