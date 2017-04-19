@@ -395,9 +395,9 @@ void display_menu(void)
 	display_voc(6,40,(unsigned short)(air_info.tvoc_voc),2);
 	display_hcho(6,125,(unsigned short)(hcho_sensor_recv_data.reslut),2);
 	
-	display_humidity(9,40,(unsigned short)(air_info.cur_hum));
+	display_humidity(9,40,(air_info.cur_hum));
 	display_co2(9,125,(unsigned short)(co2_sensor_recv_data.reslut),2);
-	display_temp(12,40,(unsigned short)(air_info.cur_temp),2);
+	display_temp(12,40,(air_info.cur_temp),2);
 	display_num(12,125,666,2);
 	
 	EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)g_image_buf,1);
@@ -897,7 +897,7 @@ void load_data_to_graph_buf(P_S_Save_Data data)
 	data->min_data = min_in_n_buf(data->buf,data->save_num);
 	
 	unsigned char loopx = data->save_num;
-	data->operat_point = data->point;
+	data->operat_point = data->point - 1;
 	graph_buf.save_num = data->save_num;
 	graph_buf.max_data = data->max_data;
 	graph_buf.min_data = data->min_data;
@@ -958,7 +958,7 @@ void set_cursor(unsigned char direction)
 {
 	if(1 == direction)//ÏòÓÒÒÆ¶¯
 		{
-			if(graph_buf.read_focus > 1)
+			if(graph_buf.read_focus > 0)
 				{
 					graph_buf.read_focus --;
 				}

@@ -620,7 +620,7 @@ unsigned int get_tvoc_value(void)
 	tvoc_voc = tvoc_value[7];
 	tvoc_voc <<= 8;
 	tvoc_voc += tvoc_value[8];
-	if( 0 == tvoc_value[2])
+	if(( 0 == tvoc_value[2])&&(tvoc_voc < 1000))
 		{
 			air_info.tvoc_co2 = tvoc_co2;
 			air_info.tvoc_voc = tvoc_voc;
